@@ -18,12 +18,13 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(MultiplayerScreen.class)
+@Mixin(value = MultiplayerScreen.class, priority = 900)
 public abstract class MultiplayerScreenMixin extends Screen {
     @Shadow
     @Final
@@ -65,7 +66,11 @@ public abstract class MultiplayerScreenMixin extends Screen {
         super(text);
     }
 
-    @Override
+    /**
+     * @author Puyodead1
+     * @reason add new button to axis grid
+     */
+    @Overwrite()
     public void init() {
         if (this.initialized) {
             this.serverListWidget.setDimensionsAndPosition(this.width, this.height - 64 - 32, 0, 32);
@@ -159,13 +164,9 @@ public abstract class MultiplayerScreenMixin extends Screen {
         this.updateButtonActivationStates();
     }
 
-    @Inject(method = "updateButtonActivationStates", at = @At("HEAD"))
-    protected void updateButtonActivationStates$disable(CallbackInfo ci) {
-        this.buttonQuickDelete.active = false;
-    }
-
-    @Inject(method = "updateButtonActivationStates", at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/widget/ButtonWidget;active:Z", ordinal = 5, shift = At.Shift.AFTER))
-    protected void updateButtonActivationStates$enable(CallbackInfo ci) {
-        this.buttonQuickDelete.active = true;
+    @Inject(method = "updateButtonActivationStates", at = @At("TAIL"))
+    private void onUpdateButtonActivationStates(CallbackInfo info) {
+        MultiplayerServerListWidget.Entry entry = this.serverListWidget.getSelectedOrNull();
+        this.buttonQuickDelete.active = entry instanceof MultiplayerServerListWidget.ServerEntry;
     }
 }
