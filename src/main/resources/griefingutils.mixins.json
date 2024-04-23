@@ -8,6 +8,7 @@
     "GameMenuScreenMixin",
     "ItemEntityMixin",
     "MinecraftClientMixin",
+    "MultiplayerScreenMixin",
     "MultiplayerServerListWidget$ServerEntryMixin",
     "NameProtectMixin",
     "PlayerEntityMixin"
