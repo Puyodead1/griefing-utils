@@ -1,6 +1,7 @@
 package griefingutils.modules;
 
 import griefingutils.toast.NotificationToast;
+import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.Setting;
@@ -13,11 +14,13 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.GuardianEntity;
 import net.minecraft.entity.passive.SnifferEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerPosition;
 import net.minecraft.item.Items;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.*;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.Vec3d;
 
 import static net.minecraft.network.packet.s2c.play.EntityAnimationS2CPacket.*;
 
@@ -77,20 +80,24 @@ public class AntiCrash extends BetterModule {
     }
 
     private static boolean isInvalid(ExplosionS2CPacket p) {
-        return p.getX() > 30_000_000 ||
-            p.getY() > 30_000_000 ||
-            p.getZ() > 30_000_000 ||
-            p.getX() < -30_000_000 ||
-            p.getY() < -30_000_000 ||
-            p.getZ() < -30_000_000 ||
-            p.getRadius() > 1000 ||
-            p.getAffectedBlocks().size() > 1_000_000 ||
-            p.getPlayerVelocityX() > 100_000 ||
-            p.getPlayerVelocityY() > 100_000 ||
-            p.getPlayerVelocityZ() > 100_000 ||
-            p.getPlayerVelocityX() < -100_000 ||
-            p.getPlayerVelocityY() < -100_000 ||
-            p.getPlayerVelocityZ() < -100_000;
+        PlayerEntity playerEntity = MeteorClient.mc.player;
+        if(playerEntity == null) return false;
+        Vec3d vec3d = p.center();
+
+        return vec3d.getX() > 30_000_000 ||
+                vec3d.getY() > 30_000_000 ||
+                vec3d.getZ() > 30_000_000 ||
+                vec3d.getX() < -30_000_000 ||
+                vec3d.getY() < -30_000_000 ||
+                vec3d.getZ() < -30_000_000 ||
+//            p.getRadius() > 1000 ||
+//            p.getAffectedBlocks().size() > 1_000_000 ||
+                playerEntity.getVelocity().getX() > 100_000 ||
+                playerEntity.getVelocity().getY() > 100_000 ||
+                playerEntity.getVelocity().getZ() > 100_000 ||
+                playerEntity.getVelocity().getX() < -100_000 ||
+                playerEntity.getVelocity().getY() < -100_000 ||
+                playerEntity.getVelocity().getZ() < -100_000;
     }
 
     private static boolean isInvalid(ParticleS2CPacket p) {
@@ -99,12 +106,17 @@ public class AntiCrash extends BetterModule {
     }
 
     private static boolean isInvalid(PlayerPositionLookS2CPacket p) {
-        return p.getX() > 30_000_000 ||
-            p.getY() > 30_000_000 ||
-            p.getZ() > 30_000_000 ||
-            p.getX() < -30_000_000 ||
-            p.getY() < -30_000_000 ||
-            p.getZ() < -30_000_000;
+        PlayerEntity playerEntity = MeteorClient.mc.player;
+        if(playerEntity == null) return false;
+        PlayerPosition playerPosition = PlayerPosition.fromEntity(playerEntity);
+        PlayerPosition playerPosition2 = PlayerPosition.apply(playerPosition, p.change(), p.relatives());
+
+        return playerPosition2.position().getX() > 30_000_000 ||
+            playerPosition2.position().getY() > 30_000_000 ||
+            playerPosition2.position().getZ() > 30_000_000 ||
+            playerPosition2.position().getX() < -30_000_000 ||
+            playerPosition2.position().getY() < -30_000_000 ||
+            playerPosition2.position().getZ() < -30_000_000;
     }
 
     private static boolean isInvalid(EntityVelocityUpdateS2CPacket p) {
@@ -177,7 +189,7 @@ public class AntiCrash extends BetterModule {
     }
 
     private boolean isInvalid(EntityAnimationS2CPacket packet) {
-        Entity entity = mc.world.getEntityById(packet.getId());
+        Entity entity = mc.world.getEntityById(packet.getEntityId());
         if (entity == null) return false; // vanilla already checks this
         return switch (packet.getAnimationId()) {
             case SWING_MAIN_HAND, SWING_OFF_HAND -> !(entity instanceof LivingEntity);

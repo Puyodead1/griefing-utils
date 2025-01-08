@@ -14,6 +14,7 @@ import meteordevelopment.orbit.EventHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.network.ClientConnection;
+import net.minecraft.network.DisconnectionInfo;
 import net.minecraft.network.NetworkSide;
 import net.minecraft.network.listener.ClientLoginPacketListener;
 import net.minecraft.network.packet.c2s.login.LoginHelloC2SPacket;
@@ -114,7 +115,7 @@ public class CrackedKickModule extends BetterModule {
                 public void onQueryRequest(LoginQueryRequestS2CPacket packet) {}
 
                 @Override
-                public void onDisconnected(Text reason) {}
+                public void onDisconnected(DisconnectionInfo info) {}
 
                 @Override
                 public boolean isConnectionOpen() {

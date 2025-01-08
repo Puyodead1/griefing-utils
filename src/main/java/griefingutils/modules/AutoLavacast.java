@@ -162,7 +162,7 @@ public class AutoLavacast extends BetterModule {
     public void onActivate() {
         if (!Utils.canUpdate() || !enablePlace.get()) return;
 
-        ((IVec3d)mc.player.getVelocity()).set(0, 0, 0);
+        ((IVec3d)mc.player.getVelocity()).meteor$set(0,0,0);
 
         BlockPos pos = mc.player.getBlockPos().down();
         place(pos);
@@ -193,7 +193,7 @@ public class AutoLavacast extends BetterModule {
     @EventHandler
     private void onMove(PlayerMoveEvent event) {
         if (!Utils.canUpdate() || !inputting()) return;
-        ((IVec3d) mc.player.getVelocity()).set(0, 0, 0);
+        ((IVec3d) mc.player.getVelocity()).meteor$set(0, 0, 0);
     }
 
     private boolean isRightClickPressed = false;
@@ -228,8 +228,8 @@ public class AutoLavacast extends BetterModule {
             goingDown ? mc.player.getY() : newPos.y,
             goingDown ? newPos.z : mc.player.getZ());
         if (isCollidingWithSomething(firstPacketPos) || isCollidingWithSomething(newPos)) return false;
-        sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(firstPacketPos.x, firstPacketPos.y, firstPacketPos.z, false));
-        sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(newPos.x, newPos.y, newPos.z, true));
+        sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(firstPacketPos.x, firstPacketPos.y, firstPacketPos.z, false, false));
+        sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(newPos.x, newPos.y, newPos.z, true, false));
         mc.player.setPosition(newPos.x, newPos.y, newPos.z);
         if (dontLerp.get()) mc.player.resetPosition();
         return true;

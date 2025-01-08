@@ -1,8 +1,10 @@
 package griefingutils.toast;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.advancement.AdvancementDisplay;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.toast.Toast;
 import net.minecraft.client.toast.ToastManager;
@@ -16,13 +18,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+import static meteordevelopment.meteorclient.MeteorClient.mc;
+
 public class NotificationToast implements Toast {
-    private static final Identifier TEXTURE = new Identifier("toast/advancement");
+    private static final Identifier TEXTURE = Identifier.of("toast/advancement");
     private final Text title, line1, line2;
     private final ItemStack icon;
     private final boolean isImportant;
     private int remainingDings = 3;
     private long nextDingTime;
+    private Toast.Visibility visibility = Toast.Visibility.HIDE;
 
     public NotificationToast(Text title, Text line1, @Nullable Text line2, Item icon, boolean isImportant) {
         this.title = title;
@@ -33,15 +38,14 @@ public class NotificationToast implements Toast {
     }
 
     @Override
-    public Visibility draw(DrawContext ctx, ToastManager manager, long startTime) {
-        TextRenderer textRenderer = manager.getClient().textRenderer;
+    public void draw(DrawContext ctx, TextRenderer textRenderer, long startTime) {
         if (isImportant) {
             if (startTime % 1000 < 500)
                 RenderSystem.setShaderColor(3.0f, 0.5f, 0.5f, 1.0f);
         } else {
             RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         }
-        ctx.drawGuiTexture(TEXTURE, 0, 0, this.getWidth(), this.getHeight());
+        ctx.drawGuiTexture(RenderLayer::getGuiTextured, TEXTURE, 0, 0, this.getWidth(), this.getHeight());
         if (isImportant) RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         int height = this.getHeight() / 2 - textRenderer.fontHeight / 2;
         if (startTime < 1500L) {
@@ -62,17 +66,26 @@ public class NotificationToast implements Toast {
         ctx.fill(4, 27, getProgressBarX(startTime, 7000), 28, 0xff00bb00);
 
         if(nextDingTime < startTime && remainingDings > 0 && isImportant) {
-            manager.getClient().getSoundManager().play(
+            mc.getSoundManager().play(
                 PositionedSoundInstance.master(SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), 1f, 1f));
             remainingDings--;
             nextDingTime = startTime + 1000L;
         }
-        return startTime >= 7000L ? Toast.Visibility.HIDE : Toast.Visibility.SHOW;
     }
 
     public static int getProgressBarX(long startTime, long maxTime) {
         if(startTime == 0) return 4;
         float delta = MathHelper.clamp((float) startTime / maxTime, 0f, 1f);
         return (int) (152 * delta) + 4;
+    }
+
+    @Override
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    @Override
+    public void update(ToastManager manager, long time) {
+        this.visibility = time >= 7000L ? Toast.Visibility.HIDE : Toast.Visibility.SHOW;
     }
 }

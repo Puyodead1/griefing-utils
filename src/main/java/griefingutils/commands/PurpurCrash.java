@@ -26,7 +26,7 @@ public class PurpurCrash extends BetterCommand {
         info("Sending %d packet(s)".formatted(packets));
         Random random = Random.create();
         for (int i = 0; i < packets; i++) {
-            sendCustomPayload(new Identifier("purpur", "beehive_c2s"), buf -> {
+            sendCustomPayload(Identifier.of("purpur", "beehive_c2s"), buf -> {
                 long l = new BlockPos(
                     random.nextBetween(-30_000_000, 30_000_000),
                     random.nextBetween(250, 254),

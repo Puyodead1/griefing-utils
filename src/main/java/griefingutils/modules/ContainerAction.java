@@ -326,7 +326,7 @@ public class ContainerAction extends BetterModule {
         if (!isProcessing) return;
         Vec2f rot = throwDirection.get().getThrowAngle(mc.player);
         if (throwItems.get() && throwDirection.get() != ThrowDirection.FORWARDS)
-            sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(rot.x, rot.y, mc.player.isOnGround()));
+            sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(rot.x, rot.y, mc.player.isOnGround(), false));
         ScreenHandler handler = mc.player.currentScreenHandler;
         int size = SlotUtils.indexToId(SlotUtils.MAIN_START);
 

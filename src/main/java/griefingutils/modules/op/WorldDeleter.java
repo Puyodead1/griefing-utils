@@ -136,7 +136,7 @@ public class WorldDeleter extends BetterModule {
 
     @EventHandler
     private void onPlayerMove(PlayerMoveEvent event) {
-        ((IVec3d) mc.player.getVelocity()).set(0, 0, 0);
+        ((IVec3d) mc.player.getVelocity()).meteor$set(0, 0, 0);
     }
 
     @EventHandler

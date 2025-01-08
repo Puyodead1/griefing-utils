@@ -56,7 +56,7 @@ public class VanillaFlight extends BetterModule {
         if (mc.world.getTime() % 10 == 0 &&
             !playerCollides(mc.player.getPos().offset(Direction.DOWN, 0.03126), true, false))
         {
-            sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY() - 0.03126, mc.player.getZ(), false));
+            sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY() - 0.03126, mc.player.getZ(), false, false));
             ((ClientPlayerEntityAccessor) mc.player).setTicksSinceLastPositionPacketSent(19);
         }
     }
@@ -79,7 +79,7 @@ public class VanillaFlight extends BetterModule {
         if (isMovingDown) velY -= (vSpeed + 0.001) / 20;
 
         Vec3d vel = PlayerUtils.getHorizontalVelocity(hSpeed - 0.001).add(0, velY, 0);
-        ((IVec3d)mc.player.getVelocity()).set(vel.x, vel.y, vel.z);
+        ((IVec3d)mc.player.getVelocity()).meteor$set(vel.x, vel.y, vel.z);
     }
 }
 
