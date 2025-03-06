@@ -12,10 +12,15 @@ import meteordevelopment.meteorclient.addons.GithubRepo;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
 import meteordevelopment.meteorclient.commands.Commands;
 import meteordevelopment.meteorclient.systems.modules.Modules;
+import meteordevelopment.meteorclient.utils.misc.MeteorStarscript;
+import meteordevelopment.starscript.value.Value;
+import meteordevelopment.starscript.value.ValueMap;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.client.MinecraftClient;
 import org.slf4j.Logger;
+
+import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class GriefingUtils extends MeteorAddon {
     public static final Logger LOG = LogUtils.getLogger();
@@ -26,6 +31,11 @@ public class GriefingUtils extends MeteorAddon {
         LOG.info("Initializing 0x06's Griefing Utils");
         registerModules();
         registerCommands();
+
+        ValueMap starscript = MeteorStarscript.ss.getGlobals().get("server").get().getMap();
+        starscript.set("brand", () -> Value.string((mc.getNetworkHandler() != null && mc.getNetworkHandler().getBrand() != null) ? mc.getNetworkHandler().getBrand() : "Unknown"));
+        starscript.set("day", () -> mc.world != null ? Value.number(Math.round((float) mc.world.getTimeOfDay() / 24000L)) : Value.string("Unknown"));
+        starscript.set("real_day", () -> mc.world != null ? Value.number(Math.round((float) ((mc.world.getTimeOfDay() / 24000L) / 3) / 24)) : Value.string("Unknown"));
     }
 
     private static void registerModules() {
