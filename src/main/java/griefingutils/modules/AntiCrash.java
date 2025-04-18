@@ -130,11 +130,11 @@ public class AntiCrash extends BetterModule {
 
     private boolean isInvalid(InventoryS2CPacket packet) {
         if (mc.player == null) return true;
-        if (packet.getSyncId() == 0) {
-            return packet.getContents().size() > mc.player.playerScreenHandler.slots.size();
+        if (packet.syncId() == 0) {
+            return packet.contents().size() > mc.player.playerScreenHandler.slots.size();
         } else
             return mc.player.currentScreenHandler == null ||
-                packet.getContents().size() > mc.player.currentScreenHandler.slots.size() + mc.player.playerScreenHandler.slots.size();
+                packet.contents().size() > mc.player.currentScreenHandler.slots.size() + mc.player.playerScreenHandler.slots.size();
     }
 
     private boolean isInvalid(ScreenHandlerSlotUpdateS2CPacket packet) {

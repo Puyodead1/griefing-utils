@@ -16,7 +16,7 @@ public class CreativeUtils {
 
     public static void saveHeldStack() {
         ClientPlayerEntity player = GriefingUtils.MC.player;
-        int selectedSlot = player.getInventory().selectedSlot;
+        int selectedSlot = player.getInventory().getSelectedSlot();
         savedHeldStack = player.getInventory().getStack(selectedSlot);
     }
 
@@ -29,7 +29,7 @@ public class CreativeUtils {
     public static void giveToEmptySlot(ItemStack stack) {
         ClientPlayerEntity player = GriefingUtils.MC.player;
         ClientPlayerInteractionManager interactionManager = GriefingUtils.MC.interactionManager;
-        int selectedSlot = player.getInventory().selectedSlot;
+        int selectedSlot = player.getInventory().getSelectedSlot();
 
         if (player.getMainHandStack().isEmpty())
             interactionManager.clickCreativeStack(stack, 36 + selectedSlot);
@@ -43,7 +43,7 @@ public class CreativeUtils {
 
     public static void giveToSelectedSlot(ItemStack stack) {
         ClientPlayerInteractionManager interactionManager = GriefingUtils.MC.interactionManager;
-        int selectedSlot = GriefingUtils.MC.player.getInventory().selectedSlot;
+        int selectedSlot = GriefingUtils.MC.player.getInventory().getSelectedSlot();
 
         interactionManager.clickCreativeStack(stack, 36 + selectedSlot);
     }

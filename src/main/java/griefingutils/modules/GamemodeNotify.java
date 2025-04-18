@@ -52,7 +52,7 @@ public class GamemodeNotify extends BetterModule {
 
                 GameMode gameMode = entry.gameMode();
                 String player = networkHandler().getPlayerListEntry(entry.profileId()).getProfile().getName();
-                if (message.get()) info("%s has switched to %s mode!".formatted(player, gameMode.getName()));
+                if (message.get()) info("%s has switched to %s mode!".formatted(player, gameMode.name()));
                 if (notification.get()) addToastWithLimit(() -> new NotificationToast(
                     Text.of("Gamemode Notify"),
                     Text.of("%s has switched:".formatted(player)),
